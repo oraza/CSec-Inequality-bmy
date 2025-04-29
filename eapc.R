@@ -278,7 +278,7 @@ df_eapc <- df_eapc %>%
 library(ggh4x)
 
 # Plot
-ggplot(df_eapc, aes(x = EAPC, y = group)) +
+eapcPlot <- ggplot(df_eapc, aes(x = EAPC, y = group)) +
   geom_vline(xintercept = 0, linetype = "dashed", color = "red") +
   geom_point(size = 2) +
   geom_errorbarh(aes(xmin = LL, xmax = UL), height = 0.25) +
@@ -294,6 +294,10 @@ ggplot(df_eapc, aes(x = EAPC, y = group)) +
   ) +
   theme_minimal(base_size = 12) +
   theme(strip.text = element_text(face = "bold"))
+
+# saving high resolution 
+ggsave("eapcPlot.png", eapcPlot, dpi = 1600 )
+
 
 
 
