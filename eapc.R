@@ -256,3 +256,44 @@ eapc_lower <- (exp(conf_int[1]) - 1) * 100
 eapc_upper <- (exp(conf_int[2]) - 1) * 100
 EAPC <- paste0("EAPC: ", round(eapc_mean, 2), " (", round(eapc_lower, 2), " to ", round(eapc_upper, 2), ")")
 print(EAPC)
+
+library(ggplot2)
+library(readr)
+library(dplyr)
+
+# 1. Read your CSV file
+df_eapc <- read_csv("sheet3.csv")
+
+# 2. Create forest plot
+# Optional: reorder group within each category
+df_eapc <- df_eapc %>%
+  mutate(group = fct_reorder(group, EAPC))
+
+df_eapc <- df_eapc %>%
+  mutate(Category = factor(Category, levels = c("Educational Status",  "Socioeconomical Status", "Place of residence", "Region", "Overall")))
+
+
+# Plot
+
+library(ggh4x)
+
+# Plot
+ggplot(df_eapc, aes(x = EAPC, y = group)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "red") +
+  geom_point(size = 2) +
+  geom_errorbarh(aes(xmin = LL, xmax = UL), height = 0.25) +
+  ggh4x::facet_wrap2(
+    ~ Category,
+    scales = "free_y",
+    ncol = 1,
+    strip = ggh4x::strip_themed(
+      background_x = ggh4x::elem_list_rect(
+        fill = c(rep("white", 4), "#22bbbb")  # 4 white, last (Overall) is blue
+      )
+    )
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(strip.text = element_text(face = "bold"))
+
+
+
